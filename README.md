@@ -34,9 +34,7 @@ Exit --
 ### Project Screen
 
 
-Save - creates a backup
-
-of your files and folder.
+Save - creates a backup of your files and folder.
 
 Files - add or delist folders and files to your project.
 
