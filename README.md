@@ -19,7 +19,7 @@ Or download a binary directly from the [releases page](https://github.com/YourUs
 
 ## Screens
 
-Menu Screen
+### Menu Screen
 
 
 Create - Create a new project
@@ -31,7 +31,7 @@ Open Project --
 Exit --
 
 
-Project Screen
+### Project Screen
 
 
 Save - creates a backup
