@@ -1,11 +1,8 @@
 #!/bin/sh
 set -e
 
-REPO="YourUsername/grove"
-BINARY="grove"
-INSTALL_DIR="/usr/local/bin"
+REPO="avatardeejay/grove"
 
-# Detect OS
 OS="$(uname -s)"
 case "$OS" in
   Linux)  OS="linux" ;;
@@ -17,7 +14,6 @@ case "$OS" in
     ;;
 esac
 
-# Detect architecture
 ARCH="$(uname -m)"
 case "$ARCH" in
   x86_64)          ARCH="x86_64" ;;
@@ -29,28 +25,29 @@ case "$ARCH" in
     ;;
 esac
 
-TARGET="grove-${OS}-${ARCH}"
-URL="https://github.com/$REPO/releases/latest/download/$TARGET"
-
 echo "Detected: $OS / $ARCH"
-echo "Downloading grove from $URL..."
 
 if command -v curl >/dev/null 2>&1; then
-  curl -fsSL "$URL" -o "/tmp/$BINARY"
+  FETCH="curl -fsSL"
 elif command -v wget >/dev/null 2>&1; then
-  wget -q "$URL" -O "/tmp/$BINARY"
+  FETCH="wget -q -O -"
 else
   echo "Error: neither curl nor wget found."
   exit 1
 fi
 
-chmod +x "/tmp/$BINARY"
+if [ "$OS" = "linux" ]; then
+  URL="https://github.com/$REPO/releases/latest/download/grove-linux-$ARCH"
+  echo "Downloading grove installer..."
+  $FETCH "$URL" -o /tmp/grove-installer
+  chmod +x /tmp/grove-installer
+  /tmp/grove-installer
 
-if [ -w "$INSTALL_DIR" ]; then
-  mv "/tmp/$BINARY" "$INSTALL_DIR/$BINARY"
-else
-  echo "Installing to $INSTALL_DIR requires sudo..."
-  sudo mv "/tmp/$BINARY" "$INSTALL_DIR/$BINARY"
+elif [ "$OS" = "darwin" ]; then
+  URL="https://github.com/$REPO/releases/latest/download/grove-darwin-$ARCH.zip"
+  echo "Downloading grove installer..."
+  $FETCH "$URL" -o /tmp/grove-installer.zip
+  unzip -q /tmp/grove-installer.zip -d /tmp/grove-installer-mac
+  APP=$(find /tmp/grove-installer-mac -name "*.app" | head -1)
+  open "$APP"
 fi
-
-echo "grove installed! Run: grove --version"
