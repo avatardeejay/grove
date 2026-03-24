@@ -24,7 +24,7 @@ Or download a binary directly from the [releases page](https://github.com/YourUs
 
 Create - Create a new project
 
-Grove Root - opens up your project directory
+Grove Root - opens up your Grove root directory, containing all projects
 
 Open Project --
 
@@ -34,13 +34,13 @@ Exit --
 ### Project Screen
 
 
-Save - creates a backup of your files and folder.
+Save - creates a backup of the files/folders listed in your project.
 
 Files - add or delist folders and files to your project.
 
-Restore - Replace the current files/folders of project on your computer with one of your backups.
+Restore - Restore one of your backups to their original location(s)
 
-Grove - Opens up the directory for the opened project, with all its backups.
+Grove - Opens up the directory for the current project, with all its backups.
 
 
 
