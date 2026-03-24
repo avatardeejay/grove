@@ -1,0 +1,20 @@
+[package]
+name = "grove_uninstaller"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dirs = "5.0"
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.52"
+
+[target.'cfg(windows)'.build-dependencies]
+embed-resource = "2"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

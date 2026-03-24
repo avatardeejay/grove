@@ -1,0 +1,160 @@
+name: Release
+
+# Triggers on a version tag push (e.g. git tag v0.1.0 && git push --tags)
+# OR manually via the "Run workflow" button in the Actions tab on GitHub
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false  # if one platform fails, the others keep going
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            name: grove-linux-x86_64
+            cargo: cargo
+
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            name: grove-linux-aarch64
+            cargo: cross   # cross handles the Linux aarch64 toolchain for us
+
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            name: grove-darwin-x86_64
+            cargo: cargo
+
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            name: grove-darwin-aarch64
+            cargo: cargo   # macOS runners can cross-compile to Apple Silicon natively
+
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            name: grove-windows-x86_64
+            cargo: cargo
+
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            name: grove-windows-aarch64
+            cargo: cargo
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install cross (Linux aarch64 only)
+        if: matrix.cargo == 'cross'
+        uses: taiki-e/install-action@cross
+
+      # Figure out the file extension (.exe on Windows, nothing elsewhere)
+      - name: Install Linux system dependencies
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: sudo apt-get install -y libwayland-dev
+      - name: Set platform vars
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            echo "EXT=.exe" >> $GITHUB_ENV
+          else
+            echo "EXT=" >> $GITHUB_ENV
+          fi
+
+      # ── Step 1: Build main grove binary ──────────────────────────────────
+      - name: Build grove
+        working-directory: grove
+        shell: bash
+        run: ${{ matrix.cargo }} build --release --target ${{ matrix.target }}
+
+      # ── Step 2: Build uninstaller ─────────────────────────────────────────
+      - name: Build grove_uninstaller
+        working-directory: grove_uninstaller
+        shell: bash
+        run: ${{ matrix.cargo }} build --release --target ${{ matrix.target }}
+
+      # ── Step 3: Stage both binaries next to grove_installer/Cargo.toml ───
+      - name: Stage binaries for installer
+        shell: bash
+        run: |
+          cp grove/target/${{ matrix.target }}/release/grove${{ env.EXT }} \
+             grove_installer/grove${{ env.EXT }}
+          cp grove_uninstaller/target/${{ matrix.target }}/release/grove_uninstaller${{ env.EXT }} \
+             grove_installer/grove_uninstaller${{ env.EXT }}
+
+      # ── Step 4: Build the installer (the thing users actually download) ───
+      - name: Build grove_installer
+        working-directory: grove_installer
+        shell: bash
+        run: ${{ matrix.cargo }} build --release --target ${{ matrix.target }}
+
+      # ── Step 5a: Package as .app bundle (macOS only) ─────────────────────
+      - name: Package as .app bundle (macOS only)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          APP="Grove Installer.app"
+          mkdir -p "$APP/Contents/MacOS"
+          mkdir -p "$APP/Contents/Resources"
+
+          cp grove_installer/target/${{ matrix.target }}/release/grove_installer \
+             "$APP/Contents/MacOS/grove_installer"
+
+          cp grove_installer/grove_installer.icns \
+             "$APP/Contents/Resources/grove_installer.icns"
+
+          cat > "$APP/Contents/Info.plist" << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>
+            <string>grove_installer</string>
+            <key>CFBundleIconFile</key>
+            <string>grove_installer</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.avatardeejay.grove-installer</string>
+            <key>CFBundleName</key>
+            <string>Grove Installer</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>CFBundleShortVersionString</key>
+            <string>0.1.0</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>10.13</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
+          zip -r "${{ matrix.name }}.zip" "$APP"
+
+      # ── Step 5b: Stage artifact for non-macOS ─────────────────────────────
+      - name: Stage release artifact (non-macOS)
+        if: runner.os != 'macOS'
+        shell: bash
+        run: |
+          cp grove_installer/target/${{ matrix.target }}/release/grove_installer${{ env.EXT }} \
+             ${{ matrix.name }}${{ env.EXT }}
+
+      # ── Step 6: Attach to the GitHub Release ─────────────────────────────
+      # The wildcard catches: .zip (mac), .exe (windows), bare binary (linux)
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.name }}*
+          generate_release_notes: true
