@@ -1,17 +1,6 @@
-
 # grove 🌴
 
-A featherweight CLI version control tool. ~900kb. You create a project (a list of files and folders) and then you can make saves of that project.
-
-## saves
-A backup of your files. 
-Saves can be restored later.
-
-### chapters
-Saves will organize into chapters once you have 99+ in one project. Chapters are a folder in your directory, and a page in your UI.
-
-### labyrinth
-By default, all your selected folders and files are stored in the root of the backup folder when you make a save. Saves can alternatively be stored in labyrinth mode, where the original paths for every element are recreated inside the backup folder. 
+A featherweight CLI version control tool. ~900kb. You create a project, a list of files and folders on your machine, and you make saves of it, to be restored at will.
 
 ## Install
 
@@ -28,6 +17,16 @@ irm https://yourusername.github.io/grove/install.ps1 | iex
 ```
 
 Or download a binary directly from the [releases page](https://github.com/YourUsername/grove/releases).
+
+## saves
+A backup of your files. 
+Saves can be restored later.
+
+### chapters
+Saves will organize into chapters once you have 99+ in one project. Chapters are a folder in your directory, and a page in your UI.
+
+### labyrinth
+By default, all your selected folders and files are stored in the root of the backup folder when you make a save. Saves can alternatively be stored in labyrinth mode, where the original paths for every element are recreated inside the backup folder. 
 
 ## Screens
 
