@@ -1,8 +1,17 @@
 
 # grove 🌴
 
-A featherweight CLI version control tool. ~900kb. You create a project (a list of files and folders) and then you can make saves of that project, backing up the files. You can then restore any save.
-By default, all your selected folders and files are stored in the root backup folder when you make a save. Saves can also be in labyrinth mode, where the original paths for every element are recreated inside the backup folder. 
+A featherweight CLI version control tool. ~900kb. You create a project (a list of files and folders) and then you can make saves of that project.
+
+## saves
+A backup of your files. 
+Saves can be restored later.
+
+### chapters
+Saves will organize into chapters once you have 99+ in one project. Chapters are a folder in your directory, and a page in your UI.
+
+### labyrinth
+By default, all your selected folders and files are stored in the root of the backup folder when you make a save. Saves can alternatively be stored in labyrinth mode, where the original paths for every element are recreated inside the backup folder. 
 
 ## Install
 
@@ -43,8 +52,9 @@ Entering a project name opens it. Entering `create` + a name will create a proje
   
   **Saves Screen** — Lists all your saves with a date and time stamp.
 
-> `chapters` will list your chapters to select. Saves organize into chapters once you have 99+ in one project.
+> `chapters` will list your chapters for you to select which you want to view.
 > `convert` converts the selected save between flat and labyrinth storage.
+
 - **Grove** - Opens the directory for the current project, with all its backups.
 
 #### Hidden Options
