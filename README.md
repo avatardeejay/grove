@@ -1,6 +1,8 @@
+
 # grove 🌴
 
 A featherweight CLI version control tool. ~900kb. You create a project (a list of files and folders) and then you can make saves of that project, backing up the files. You can then restore any save.
+By default, all your selected folders and files are stored in the root backup folder when you make a save. Saves can also be in labyrinth mode, where the original paths for every element are recreated inside the backup folder. 
 
 ## Install
 
@@ -47,8 +49,9 @@ Entering a project name opens it. Entering `create` + a name will create a proje
 
 #### Hidden Options
 
-- `labyrinth` or `lab` toggles the storage of future saves between a flat folder structure and the original folder structure the files were in (labyrinth mode). Indicated in the UI when on.
-- `delete` deletes the project (it’ll warn you).
+- `labyrinth` or `lab` toggles the storage of future saves between default and labyrinth mode. Indicated in the UI when on.
+
+- `delete` deletes the project with a warning.
 
 ## License
 
