@@ -51,8 +51,8 @@ Entering a project name opens it. Entering `create` + a name will create a proje
   
   **Saves Screen** — Lists all your saves with a date and time stamp.
 
-- `chapters` will list your chapters for you to select which one you want to view.
-
+> `chapters` will list your chapters for you to select which one you want to view.
+>
 > `convert` converts the selected save between flat and labyrinth storage.
 >
 > `delete` or del deletes the selected save(s) with a warning.
