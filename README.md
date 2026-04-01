@@ -7,13 +7,13 @@ A featherweight CLI version control tool. ~900kb. You create a project, a list o
 **Linux / macOS:**
 
 ```sh
-curl -fsSL https://yourusername.github.io/grove/install.sh | sh
+curl -fsSL https://avatardeejay.github.io/grove/install.sh | sh
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
-irm https://yourusername.github.io/grove/install.ps1 | iex
+irm https://avatardeejay.github.io/grove/install.ps1 | iex
 ```
 
 Or download a binary directly from the [releases page](https://github.com/YourUsername/grove/releases).
